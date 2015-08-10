@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -19,26 +17,21 @@ public class Exam1 {
 			URL url = new URL("http://www.manning.com/gsmith/SampleChapter1.pdf");
 			URLConnection conn = url.openConnection();
 			InputStream is = conn.getInputStream();
-			InputStreamReader isr = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(isr);
+			BufferedInputStream bis = new BufferedInputStream(is,200);
+			
 			FileOutputStream fos = new FileOutputStream(new File("SampleChapter.pdf"));
-			OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-			BufferedWriter writer = new BufferedWriter(osw);
+			BufferedOutputStream bos = new BufferedOutputStream(fos,200);
 			System.out.println("正在下载……");
 			String line;
-			StringBuilder sb = new StringBuilder();
-
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-
+			byte[] input = new byte[200];
+			int l;
+			while ((l = bis.read(input)) != -1) {
+				bos.write(input, 0, l);
 			}
-			writer.write(sb.toString());
-			System.out.println("Done");
-			writer.close();
-			osw.close();
+			System.out.println("下载完成。");
+			bos.close();
 			fos.close();
-			br.close();
-			isr.close();
+			bis.close();
 			is.close();
 
 		} catch (MalformedURLException e) {
